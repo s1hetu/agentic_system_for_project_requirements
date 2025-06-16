@@ -1,0 +1,79 @@
+{% extends 'agents/base_response.html' %}
+{% block title %}Deliverables{% endblock %}
+{% block body %}
+<h2 class="card-title text-center mb-4">Deliverables</h2>
+<div class="mb-4">
+    {% load markdown_extras %}
+
+    <p class="form-text">
+    <div class="markdown-content">
+        <div class="py-3">
+            <h3>Quality Assurance</h3>
+            <div id="qa">{{ quality_assurance|markdown }}</div>
+        </div>
+        <div class="py-3">
+            <h3>Risk Management</h3>
+            <div id="rm">{{ risk_management|markdown }}</div>
+        </div>
+        <div class="py-3">
+            <h3>Compliance</h3>
+            <div id="cmp">{{ compliance|markdown }}</div>
+        </div>
+        <div class="py-3">
+            <h3>Execution Methodology</h3>
+            <div id="em">{{ execution_methodology|markdown }}</div>
+        </div>
+        <div class="py-3">
+            <h3>Testing</h3>
+            <div id="test">{{ testing|markdown }}</div>
+        </div>
+        <div class="py-3">
+            <h3>Training Plan</h3>
+            <div id="tp">{{ training_plan|markdown }}</div>
+        </div>
+        <div class="py-3">
+            <h3>Support and Maintenance</h3>
+            <div id="sm">{{ support_and_maintenance|markdown }}</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#update-content').click(function(){
+      let changes = $('#modifications').val();
+      let original = $('#markdown-content').text();
+      $.ajax({
+        type: "POST",
+        url: "/prepare_nfr/",
+        data: {
+          user_input: changes,
+          original_text: original,
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        beforeSend: function() {
+          $('#spinner-overlay').show();
+        },
+        complete: function() {
+          $('#spinner-overlay').hide();
+        },
+        success: function(data) {
+          $('#markdown-content').html(data.data);
+          $('#modifications').val(data.quality_assurance);
+          $('#qa').text(data.quality_assurance);
+          $('#rm').text(data.risk_management);
+          $('#cmp').text(data.compliance);
+          $('#em').text(data.execution_methodology);
+          $('#test').text(data.testing);
+          $('#tp').text(data.training_plan);
+          $('#sm').text(data.support_and_maintenance);
+          $('#messages').innerText = data.messages;
+        },
+        error: function(xhr, status, error) {
+          console.error("Error:", error);
+        }
+      });
+    });
+</script>
+{% endblock %}

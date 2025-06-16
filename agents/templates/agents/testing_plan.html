@@ -1,0 +1,47 @@
+{% extends 'agents/base_response.html' %}
+{% block title %}Testing Plan{% endblock %}
+{% block body %}
+<h2 class="card-title text-center mb-4">Testing Plan</h2>
+<div class="mb-4">
+    {% load markdown_extras %}
+
+    <p class="form-text">
+    <div class="markdown-content" id="markdown-content">
+        {{ data|markdown }}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#update-content').click(function(){
+    let changes = document.getElementById("modifications").value
+    let original_content = document.getElementById("markdown-content").innerText
+    $.ajax(
+    {
+        type:"POST",
+        url: "/prepare_testing_plan/",
+        data:{
+                 user_input: changes,
+                 original_text: original_content,
+                 csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        beforeSend: function() {
+        $('#spinner-overlay').show();
+          },
+          complete: function() {
+            $('#spinner-overlay').hide();
+          },
+        success: function(data)
+        {
+        $('#markdown-content').html(data.data);
+        $('#modifications').val('');
+        $('#messages').innerText = data.messages;
+        },
+        error: function(xhr, status, error) {
+                console.error("Error: ", error);
+            }
+     });
+});
+</script>
+{% endblock %}

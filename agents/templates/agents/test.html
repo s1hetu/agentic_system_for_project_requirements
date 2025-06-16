@@ -1,0 +1,19 @@
+<html>
+<div id="template-content">
+fjwepfiwe
+{{mo}}
+</div>
+<button id="download-btn-uri">Download (Data URI)</button>
+</html>
+<script>
+    document.getElementById('download-btn-uri').addEventListener('click', function() {
+      const markdown = document.getElementById('template-content').innerText;
+      const encoded = encodeURIComponent(markdown);
+      const href = 'data:text/markdown;charset=utf-8,' + encoded;
+      const a = document.createElement('a');
+      a.href = href;
+      a.download = 'template.md';
+      a.click();
+    });
+</script>
+

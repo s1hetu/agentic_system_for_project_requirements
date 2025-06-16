@@ -1,0 +1,63 @@
+    <nav class="navbar navbar-expand-lg navbar-custom mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Scope Agency</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'prepare-understanding' %}">Project Understanding</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'prepare-objectives' %}">Key Objectives</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'prepare-deliverables' %}">Deliverables</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'prepare-panels' %}">Panels</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'prepare-modules' %}">Modules</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'prepare-actions' %}">Actions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'prepare-questions' %}">Questions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'prepare-tech-stack' %}">TechStack</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'prepare-timeline' %}">Timeline</a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="dropdownMenuButton" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">NFR</a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item" href="{% url 'prepare-quality-assurance' %}">Quality Assurance</a>
+                            </li>
+                            <li><a class="dropdown-item" href="{% url 'prepare-risk-management' %}">Risk Assessment</a></li>
+                            <li><a class="dropdown-item" href="{% url 'prepare-compliance' %}">Compliance</a></li>
+                            <!-- <li><a class="dropdown-item" href="{% url 'prepare-execution-methodology' %}">Execution
+                                Methodology</a></li> -->
+                            <li><a class="dropdown-item" href="{% url 'prepare-testing-plan' %}">Testing Plan</a></li>
+                            <li><a class="dropdown-item" href="{% url 'prepare-training-plan' %}">Training Plan</a></li>
+                            <li><a class="dropdown-item" href="{% url 'prepare-support-maintenance' %}">Support and
+                                Maintenance</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'generate-scope' %}">Scope</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
