@@ -1,0 +1,155 @@
+{% extends 'agents/base_response.html' %}
+{% block title %}Timeline{% endblock %}
+{% block body %}
+{% load markdown_extras %}
+<div class="mb-6">
+    <p class="form-text">
+    <div class="markdown-content" id="markdown-content">
+        <h2 class="text-center">Resources</h2>
+        <table class="table" id="resources">
+            <thead>
+            <tr>
+                <th>Developers</th>
+                <th>Count</th>
+            </tr>
+            </thead>
+            <tbody class="resources-data" id="resources-data">
+            {% for dev, count in resources.items %}
+
+            <tr>
+                <td>{{ dev }}</td>
+                <td>{{ count }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No data available</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br>
+        <h2 class="text-center">Timeline</h2>
+        <table class="table" id="timeline">
+            <thead>
+            <tr>
+                <th>Phase</th>
+                <th>Features</th>
+                <th>Duration</th>
+                <th>Resources</th>
+            </tr>
+            </thead>
+            <tbody class="timeline-data" id="timeline-data">
+            {% for row in table %}
+            <tr>
+
+                <td>{{ row.0 }}</td>
+
+                <td>
+                    <ul>
+                        {% for feature in row.1 %}
+                        <li>{{ feature }}</li>
+
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td class="text-center">{{ row.2 }}</td>
+                <td>
+                    <ul>
+                        {% for resource in row.3 %}
+                        <li>{{ resource }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No data available</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="p-4">
+            <h4>Total Duration: </h4>
+            <div id="duration">
+                {{duration}}
+            </div>
+        </div>
+        <div class="p-4">
+            <h4>Summary: </h4>
+
+            <div id="summary">
+                {{summary}}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+
+<script>
+    $('#update-content').click(function(){
+    let changes = document.getElementById("modifications").value
+    let original_content = document.getElementById("markdown-content").innerText
+    $.ajax({
+  type: "POST",
+  url: "/prepare_timeline/",
+  data: {
+    user_input: changes,
+    original_text: original_content,
+    csrfmiddlewaretoken: '{{ csrf_token }}'
+  },
+  beforeSend: function() {
+        $('#spinner-overlay').show();
+      },
+      complete: function() {
+        $('#spinner-overlay').hide();
+      },
+  dataType: "json",    // <-- ensure jQuery parses JSON into an object
+  success: function(data) {
+    $("#summary").text(data.summary);
+    $("#duration").text(data.duration);
+    $("#modifications").val("");
+    $('#messages').innerText = data.messages;
+
+    var $resBody = $("#resources-data").empty();
+    if (data.resources && Object.keys(data.resources).length) {
+      $.each(data.resources, function(dev, count) {
+        $("<tr>")
+          .append($("<td>").text(dev))
+          .append($("<td>").text(count))
+          .appendTo($resBody);
+      });
+    } else {
+      $resBody.append('<tr><td colspan="3">No data available</td></tr>');
+    }
+
+    var $timeBody = $("#timeline-data").empty();
+    if (Array.isArray(data.table) && data.table.length) {
+      data.table.forEach(function(row) {
+        var $featList = $("<ul>");
+        row[1].forEach(function(f) { $featList.append($("<li>").text(f)); });
+
+        var $devList = $("<ul>");
+        row[3].forEach(function(d) { $devList.append($("<li>").text(d)); });
+
+        $("<tr>")
+          .append($("<td>").text(row[0]))
+          .append($("<td>").append($featList))
+          .append($("<td>").addClass("text-center").text(row[2]))
+          .append($("<td>").append($devList))
+          .appendTo($timeBody);
+      });
+    } else {
+      $timeBody.append('<tr><td colspan="4">No data available</td></tr>');
+    }
+  },
+  error: function(xhr, status, error) {
+    console.error("AJAX error:", status, error);
+  }
+});
+
+});
+</script>
+
+{% endblock %}

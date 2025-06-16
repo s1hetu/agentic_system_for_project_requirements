@@ -1,0 +1,72 @@
+{% extends 'agents/base_response.html' %}
+{% block title %}QUESTIONS{% endblock %}
+{% block body %}
+<h2 class="card-title text-center mb-4">Provide Answers to these questions:</h2>
+<div class="markdown-content" id="markdown-content">
+    <form method="get" enctype="multipart/form-data" action="{% url 'home' %}">
+        {% csrf_token %}
+
+        <div class="mb-4" id="explanation">
+            <p class="form-text">{{ explanation }}</p>
+        </div>
+
+        <div id="questions-body">
+            {% for question in questions %}
+            <div class="mb-3">
+                <label class="form-label">{{forloop.counter}}. {{ question }} </label>
+                <input type="text" name="answer_{{ forloop.counter }}" class="form-control"
+                       placeholder="Enter your answer">
+            </div>
+            {% endfor %}
+        </div>
+        <div class="d-grid mt-4 mb-5">
+            <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    $('#update-content').click(function(){
+    let changes = document.getElementById("modifications").value
+    let original_content = document.getElementById("markdown-content").innerText
+    console.log(original_content)
+    $.ajax(
+    {
+        type:"POST",
+        url: "/prepare_questions/",
+        data:{
+                 user_input: changes,
+                 original_text: original_content,
+                 csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        beforeSend: function() {
+        $('#spinner-overlay').show();
+          },
+          complete: function() {
+            $('#spinner-overlay').hide();
+          },
+        success: function(data)
+        {
+        $('#modifications').val('');
+        $('#messages').innerText = data.messages;
+        $('#explanation').innerText = data.explanation;
+        let html = '';
+        data.questions.forEach(function(question, index) {
+        html += `
+            <div class="mb-3">
+                <label class="form-label">${index + 1}. ${question}</label>
+                <input type="text" name="answer_${index + 1}" class="form-control" placeholder="Enter your answer">
+            </div>
+        `;
+    });
+
+    $('#questions-body').html(html); // Insert generated HTML
+        },
+        error: function(xhr, status, error) {
+                console.error("Error: ", error);
+            }
+     });
+});
+</script>
+{% endblock %}

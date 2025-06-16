@@ -1,0 +1,49 @@
+{% extends 'agents/base_response.html' %}
+{% block title %}Actions{% endblock %}
+{% block body %}
+<h2 class="card-title text-center mb-4">Actions</h2>
+<div class="mb-4">
+    {% load markdown_extras %}
+    <div class="markdown-content" id="markdown-content">
+        <!-- {% for name, description in data.items %}
+        <h3 class="panel-name" id="panel-name">{{ name }}</h3>
+        <p class="panel-description" id="panel-description">{{ description }}</p>
+        {% endfor %} -->
+        {{data |markdown}}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#update-content').click(function(){
+    let changes = document.getElementById("modifications").value
+    let original_content = document.getElementById("markdown-content").innerText
+    $.ajax(
+    {
+        type:"POST",
+        url: "/prepare_panels/",
+        data:{
+                 user_input: changes,
+                 original_text: original_content,
+                 csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        beforeSend: function() {
+        $('#spinner-overlay').show();
+          },
+          complete: function() {
+            $('#spinner-overlay').hide();
+          },
+        success: function(data)
+        {
+        $('#markdown-content').html(data.data);
+        $('#modifications').val('');
+        $('#messages').innerText = data.messages;
+        },
+        error: function(xhr, status, error) {
+                console.error("Error: ", error);
+            }
+     });
+});
+</script>
+{% endblock %}

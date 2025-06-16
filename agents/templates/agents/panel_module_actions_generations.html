@@ -1,0 +1,16 @@
+
+{% extends 'agents/base.html' %}
+{% block title %}Panel Modules{% endblock %}
+{% block heading %}Panel Modules{% endblock %}
+{% load form_tags %}
+{% load markdown_extras %}
+{% block body %}
+<div class="mb-4">
+    {{ form.panel.label_tag }}
+    {{ form.panel|add_class:"form-control" }}
+</div>
+<div class="mb-4">
+    {{ form.module.label_tag }}
+    {{ form.module|add_class:"form-control" }}
+</div>
+{% endblock %}
